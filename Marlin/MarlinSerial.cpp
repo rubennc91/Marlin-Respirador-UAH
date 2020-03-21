@@ -158,6 +158,9 @@
               case state_M410:
                 quickstop_stepper();
                 break;
+			  case state_M41:
+				loop_comand();
+				break;
               default:
                 break;
             }

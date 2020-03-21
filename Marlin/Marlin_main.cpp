@@ -6935,6 +6935,18 @@ static bool pin_is_protected(const int8_t pin) {
 }
 
 /**
+* M41: Set a loop
+* 
+*
+*/
+inline void gcode_M41(){
+  while(1){
+    do_blocking_move_to(10, 10, 10, 2000);
+  }
+}
+
+
+/**
  * M42: Change pin status via GCode
  *
  *  P<pin>  Pin number (LED if omitted)
@@ -9620,6 +9632,11 @@ void quickstop_stepper() {
   SYNC_PLAN_POSITION_KINEMATIC();
 }
 
+void loop_command()
+{
+  
+}
+
 //
 // Filament Runout Sensors
 //
@@ -11050,17 +11067,17 @@ inline void gcode_M999() {
   FlushSerialRequestResend();
 }
 inline void gcode_M2000(){
-	
+  
 }
 inline void gcode_M2009(){
-	if (parser.seen('V')) hardware_version = parser.value_celsius();
-	//SERIAL_ECHOPAIR("HV...:", hardware_version);//liu
-	(void)settings.Fixed_parameter_save();
-	SERIAL_ECHOLNPGM("HV_set_ok");
-	
+  if (parser.seen('V')) hardware_version = parser.value_celsius();
+  //SERIAL_ECHOPAIR("HV...:", hardware_version);//liu
+  (void)settings.Fixed_parameter_save();
+  SERIAL_ECHOLNPGM("HV_set_ok");
+  
 }
 
-		
+    
 
 #if ENABLED(SWITCHING_EXTRUDER)
   #if EXTRUDERS > 3
@@ -11839,6 +11856,9 @@ void process_parsed_command() {
 
       case 31: // M31: Report time since the start of SD print or last M109
         gcode_M31(); break;
+    
+    case 41:
+      gcode_M41(); break;
 
       case 42: // M42: Change pin state
         gcode_M42(); break;
@@ -12467,7 +12487,7 @@ void process_parsed_command() {
       case 999: // M999: Restart after being Stopped
         gcode_M999();
         break;
-	case 2000: //  
+  case 2000: //  
         gcode_M2000();
         break;
       case 2009: //  
@@ -14689,8 +14709,8 @@ void loop() {
         sprintf_P(tmp_y,PSTR("G28 Y"));
         //SERIAL_ECHOLN(tmp_y);
         enqueue_and_echo_command(tmp_y);
-		
-	sprintf_P(tmp_y, PSTR("G0 F1000 Z%u.%u"), powerloss.Z_t / 10, powerloss.Z_t % 10);//jone
+    
+  sprintf_P(tmp_y, PSTR("G0 F1000 Z%u.%u"), powerloss.Z_t / 10, powerloss.Z_t % 10);//jone
        enqueue_and_echo_command(tmp_y);
 
         axis_homed[Z_AXIS] = axis_known_position[Z_AXIS] = true;
@@ -14702,7 +14722,7 @@ void loop() {
         else
           sprintf_P(tmp_y, PSTR("M32 S%lu !%s"), powerloss.pos_t, powerloss.P_file_name);
 
-	
+  
 
         //SERIAL_ECHOLNPAIR("Gco : ", tmp_y);
 
@@ -14724,11 +14744,11 @@ void loop() {
     //  enqueue_and_echo_command(tmp_y);
     ///////
     if(current_position[Z_AXIS]>=5)
-	{
-		sprintf_P(tmp_y, PSTR("G28 X"));
-		//SERIAL_ECHOLN(tmp_y);
-		enqueue_and_echo_command(tmp_y);
-	}
+  {
+    sprintf_P(tmp_y, PSTR("G28 X"));
+    //SERIAL_ECHOLN(tmp_y);
+    enqueue_and_echo_command(tmp_y);
+  }
     powerloss.recovery = Rec_Idle;
   }
   endstops.report_state();
